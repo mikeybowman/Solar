@@ -1,4 +1,4 @@
-# Solar; The Open Source Game Design Document Builder
+# Solar - The Open Source Game Design Document Builder
 
 Solar is a desktop application for creating and maintaining Game Design Documents without relying on online services, proprietary tools, or rigid templates. It’s designed for developers who want structured documentation that scales with a project, while still remaining easy to edit and version control.
 
