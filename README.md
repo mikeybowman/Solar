@@ -23,6 +23,23 @@ The application uses a simple desktop interface with collapsible entries to prev
 - Collapsible entries to keep large documents navigable
 - Entry headers update automatically based on name fields
 
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="assets/intro.png" width="300"><br>
+      Intro Example
+    </td>
+    <td align="center">
+      <img src="assets/mech_1.png" width="300"><br>
+      Collapsed Entries
+    </td>
+    <td align="center">
+      <img src="assets/mech_2.png" width="300"><br>
+      Expanded Entries
+    </td>
+  </tr>
+</table>
+
 ### Export Options
 
 - Microsoft Word (.docx) export with clean section formatting
@@ -89,6 +106,10 @@ YourGame_GDD/
 └── 08_Technical/
 ```
 Each entry is written to its own file, making it easy to track changes, review diffs, and share specific sections with collaborators.
+
+<p align="center">
+  <img src="assets/file_structure.png" width="300">
+</p>
 
 ### Design Philosophy
 
