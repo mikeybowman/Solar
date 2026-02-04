@@ -1,0 +1,133 @@
+{
+  "metadata": {
+    "project_name": "Void Arena",
+    "version": "1.0",
+    "created_date": "2026-02-04T12:00:00",
+    "last_modified": "2026-02-04T12:00:00",
+    "author": "Game Designer",
+    "studio": "Your Game Studio"
+  },
+  "introduction": {
+    "project_name": "Void Arena - Development Build",
+    "game_title": "Void Arena",
+    "genre": "First-Person Arena Shooter",
+    "platform": "PC (Steam), PlayStation 5, Xbox Series X/S",
+    "target_audience": "Hardcore FPS players, ages 16-35, competitive gamers",
+    "game_overview": "Void Arena is a fast-paced, competitive arena shooter set in the grimdark depths of space. Players engage in intense multiplayer battles across asymmetric maps using a diverse arsenal of futuristic weapons. Emphasis on skill-based movement, precise aim, and tactical positioning creates a high skill ceiling for competitive play.",
+    "unique_selling_points": "• Zero gravity combat mechanics with full 6DOF movement\n• Weapon crafting system using salvaged components\n• Procedurally generated tournament brackets\n• Cross-platform competitive ranking\n• Grimdark sci-fi aesthetic with industrial design",
+    "inspiration": "Quake III Arena, Unreal Tournament, Titanfall 2 movement system, Warhammer 40K aesthetic, Apex Legends weapon variety"
+  },
+  "mechanics": [
+    {
+      "name": "Zero-G Movement System",
+      "description": "Players can move freely in three dimensions using magnetic boots and thruster packs. Wall-running, ceiling combat, and momentum preservation create dynamic movement options.",
+      "implementation": "Physics-based movement with configurable thrust values. Magnetic attachment system for surface traversal. Momentum conservation across all movement states.",
+      "impact": "Dramatically increases skill ceiling and map awareness requirements. Creates unique tactical opportunities and engagement angles.",
+      "balance": "Thruster fuel management prevents infinite movement. Magnetic boot attachment has brief delay to prevent instant direction changes."
+    },
+    {
+      "name": "Component-Based Weapon Crafting",
+      "description": "Weapons are assembled from modular components found throughout maps. Barrels, triggers, scopes, and power sources can be combined for custom loadouts.",
+      "implementation": "Drag-and-drop interface for weapon assembly. Component stats affect weapon performance. Limited inventory slots force tactical decisions.",
+      "impact": "Every match feels unique with different weapon configurations. Encourages map exploration and resource management.",
+      "balance": "Higher-tier components are rarer and located in dangerous map positions. Assembly time creates vulnerability windows."
+    }
+  ],
+  "levels": [
+    {
+      "name": "Derelict Station Alpha",
+      "level_type": "Symmetrical Arena",
+      "difficulty": "Medium",
+      "play_time": "8-12 minutes",
+      "objectives": "Team Deathmatch, Capture the Core",
+      "environment": "Abandoned space station with zero-g corridors, rotating gravity sections, and exposed hull areas. Industrial machinery provides cover and movement opportunities.",
+      "enemies": "Environmental hazards include radiation zones, explosive machinery, and depressurizing chambers.",
+      "rewards": "High-tier weapon components spawn in the central reactor chamber every 3 minutes.",
+      "notes": "Asymmetric spawn positions despite symmetrical layout. Central area favors long-range engagements while outer corridors suit close combat."
+    }
+  ],
+  "characters": [
+    {
+      "name": "Assault Marine",
+      "role": "Balanced Combatant",
+      "health": "150 HP + 50 Armor",
+      "speed": "Medium (7 m/s base)",
+      "damage": "Varies by weapon",
+      "attack_speed": "Varies by weapon",
+      "abilities": "Enhanced thruster capacity for extended zero-g maneuvering. Quick weapon swap speed.",
+      "background": "Former military personnel adapted for void combat operations. Standard issue equipment optimized for versatility.",
+      "visual": "Bulky power armor with visible thruster arrays. Battle-worn plating with unit insignias. Glowing visor HUD display.",
+      "behavior": "Player-controlled character class. AI bots use medium-range engagement tactics.",
+      "strengths": "Balanced stats make them viable in all situations. Extended movement capability.",
+      "weaknesses": "No specialized advantages. Moderate health pool requires tactical positioning."
+    }
+  ],
+  "items": [
+    {
+      "name": "Plasma Rifle",
+      "item_type": "Primary Weapon",
+      "rarity": "Common",
+      "damage": "35 damage per shot",
+      "use_time": "0.8 seconds between shots",
+      "cooldown": "2.5 seconds reload time",
+      "category": "Energy Weapon",
+      "description": "Standard-issue plasma weapon firing superheated energy bolts. Reliable damage output with moderate rate of fire.",
+      "purpose": "Versatile medium-range combat weapon suitable for most engagement scenarios.",
+      "mechanism": "Draws power from weapon's energy cell. Overheating mechanism prevents sustained fire beyond 8 shots.",
+      "visual": "Angular design with glowing blue energy chamber. Visible power indicator on the side. Steam vents when cooling.",
+      "acquisition": "Found throughout maps, craft using common components, starting loadout option.",
+      "balance": "Balanced damage-to-rate ratio. Projectile travel time requires leading targets at long range."
+    },
+    {
+      "name": "Thruster Fuel Canister",
+      "item_type": "Consumable",
+      "rarity": "Uncommon",
+      "damage": "N/A",
+      "use_time": "1.5 seconds to consume",
+      "cooldown": "N/A",
+      "category": "Movement Enhancement",
+      "description": "Pressurized fuel canister that completely refills thruster capacity for extended zero-g movement.",
+      "purpose": "Enables extended movement sequences and quick escapes from dangerous situations.",
+      "mechanism": "Instant thruster refuel when consumed. Cannot be used while thrusters are active.",
+      "visual": "Small cylindrical canister with warning labels. Glowing fuel level indicator.",
+      "acquisition": "Found near thruster maintenance bays, random loot spawn, crafted using rare components.",
+      "balance": "Limited spawn locations force players into contested areas. Consumption time creates vulnerability window."
+    }
+  ],
+  "audio": [
+    {
+      "name": "Plasma Rifle Fire",
+      "audio_type": "Weapon SFX",
+      "context": "Triggered when player fires plasma rifle",
+      "duration": "0.3 seconds",
+      "volume": "Medium-High",
+      "description": "Sharp electric crack followed by a brief energy hum. Distinct enough to identify weapon type from audio alone.",
+      "mood": "Aggressive, technological, powerful",
+      "implementation": "3D positional audio with distance falloff. Slight pitch variation to prevent repetition fatigue."
+    }
+  ],
+  "art_style": [
+    {
+      "name": "Environmental Lighting",
+      "style": "Industrial Grimdark",
+      "colors": "Deep blues, stark oranges, metallic grays with rust accents",
+      "resolution": "4K textures with dynamic lighting",
+      "description": "Harsh industrial lighting creates dramatic shadows and highlights. Emergency lighting provides color contrast against dark metal surfaces.",
+      "mood": "Oppressive, dangerous, technologically advanced but deteriorating",
+      "technical": "Real-time ray-traced reflections on metal surfaces. Volumetric lighting for atmosphere.",
+      "references": "Alien franchise industrial aesthetic, Warhammer 40K gothic technology, Dead Space lighting design"
+    }
+  ],
+  "technical": [
+    {
+      "name": "Networking Architecture",
+      "technology": "Client-Server with dedicated servers",
+      "performance": "60Hz tick rate, <50ms latency target",
+      "requirements": "Broadband internet, stable connection for competitive play",
+      "description": "Authoritative server architecture with client-side prediction for movement. Anti-cheat integration and lag compensation systems.",
+      "implementation": "Custom UDP protocol with reliability layer. Delta compression for bandwidth efficiency. Server-side hit validation.",
+      "challenges": "Zero-g movement creates complex prediction scenarios. High-speed projectiles require precise timing synchronization.",
+      "testing": "Automated latency testing across regions. Load testing for 64-player scenarios. Cheat detection validation."
+    }
+  ]
+}
