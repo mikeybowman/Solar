@@ -181,6 +181,14 @@ Contributions are welcome.
 
 If you fork Solar for your own workflow, feel free to adapt it as needed.
 
+### Documentation Contributions
+
+If you’d like to improve documentation:
+- Open a Pull Request with your changes, **or**
+- Paste proposed Markdown directly into an Issue or Discussion
+
+Please do not send files via external links unless requested.
+
 ### Use Cases
 
 Solar is suitable for:
