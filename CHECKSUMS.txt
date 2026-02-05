@@ -1,0 +1,11 @@
+Solar GDD Builder v1.1.0 - File Hashes 
+Generated on Thu 02/05/2026 at 13:19:11.51 
+ 
+MD5: 
+3ce7f544a073d8e5c707959f2a7616a9
+ 
+SHA1: 
+87e8bfd72621e011d8629e8f5bc1f0c57c739944
+ 
+SHA256: 
+d2559b67bc01448f7196f826911c2265efc8444713a2baacf9818260fec820d4

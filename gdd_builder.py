@@ -253,6 +253,7 @@ class SolarGDDBuilder:
         
         # Keep track of all our collapsible entries
         self.collapsible_entries = {
+            'design_pillars': [],
             'mechanics': [],
             'levels': [],
             'characters': [],
@@ -333,7 +334,7 @@ class SolarGDDBuilder:
         return {
             "metadata": {
                 "project_name": "",
-                "version": "1.0",
+                "version": "1.1.0",
                 "created_date": datetime.now().isoformat(),
                 "last_modified": datetime.now().isoformat(),
                 "author": self.settings.get('default_author', 'Game Designer'),
@@ -347,8 +348,10 @@ class SolarGDDBuilder:
                 "target_audience": "",
                 "game_overview": "",
                 "unique_selling_points": "",
-                "inspiration": ""
+                "inspiration": "",
+                "development_timeline": ""
             },
+            "design_pillars": [],
             "mechanics": [],
             "levels": [],
             "characters": [],
@@ -535,6 +538,9 @@ class SolarGDDBuilder:
         self.tabs = {}
         self.tabs['introduction'] = self.create_introduction_tab()
         
+        # Design Pillars tab
+        self.tabs['design_pillars'] = self.create_design_pillars_tab()
+        
         # All the dynamic content tabs
         self.tabs['mechanics'] = self.create_mechanics_tab()
         self.tabs['levels'] = self.create_levels_tab() 
@@ -626,6 +632,52 @@ class SolarGDDBuilder:
         # Update the display immediately
         self.project_label.config(text=display_name)
     
+    def create_design_pillars_tab(self):
+        """Create the design pillars tab for core design principles"""
+        frame = self.add_tab('design_pillars', 'Design Pillars')
+        
+        # Container for everything
+        main_container = tk.Frame(frame, bg='#f8f8f8')
+        main_container.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
+        
+        # Header with controls
+        header_frame = tk.Frame(main_container, bg='#f8f8f8')
+        header_frame.pack(fill=tk.X, pady=(0, 8))
+        
+        tk.Label(header_frame, text="Design Pillars", **self.title_style).pack(side=tk.LEFT)
+        
+        # Control buttons on the right side
+        controls_frame = tk.Frame(header_frame, bg='#f8f8f8')
+        controls_frame.pack(side=tk.RIGHT)
+        
+        tk.Button(controls_frame, text="Add New Pillar", 
+                 command=lambda: self.add_design_pillar_entry(), **self.button_style).pack(side=tk.LEFT, padx=(0, 3))
+        tk.Button(controls_frame, text="Expand All", 
+                 command=lambda: self.expand_all_entries('design_pillars'), **self.button_style).pack(side=tk.LEFT, padx=(0, 3))
+        tk.Button(controls_frame, text="Collapse All", 
+                 command=lambda: self.collapse_all_entries('design_pillars'), **self.button_style).pack(side=tk.LEFT)
+        
+        # Scrollable area for all the design pillar entries
+        self.design_pillars_canvas = tk.Canvas(main_container, bg='#f8f8f8')
+        self.design_pillars_scrollbar = tk.Scrollbar(main_container, orient="vertical", 
+                                              command=self.design_pillars_canvas.yview)
+        self.design_pillars_frame = tk.Frame(self.design_pillars_canvas, bg='#f8f8f8')
+        
+        # Connect the scrolling
+        self.design_pillars_frame.bind(
+            "<Configure>",
+            lambda e: self.design_pillars_canvas.configure(scrollregion=self.design_pillars_canvas.bbox("all"))
+        )
+        
+        self.design_pillars_canvas.create_window((0, 0), window=self.design_pillars_frame, anchor="nw")
+        self.design_pillars_canvas.configure(yscrollcommand=self.design_pillars_scrollbar.set)
+        
+        # Pack everything
+        self.design_pillars_canvas.pack(side="left", fill="both", expand=True)
+        self.design_pillars_scrollbar.pack(side="right", fill="y")
+        
+        return frame
+    
     def create_mechanics_tab(self):
         """Create the mechanics tab where you define all your game systems"""
         frame = self.add_tab('mechanics', 'Mechanics')
@@ -705,6 +757,39 @@ class SolarGDDBuilder:
         self.mechanics_frame.update_idletasks()
         self.mechanics_canvas.configure(scrollregion=self.mechanics_canvas.bbox("all"))
     
+    def add_design_pillar_entry(self, entry_data=None):
+        """Add a new design pillar entry"""
+        # Define what fields a design pillar should have
+        fields = [
+            ("Pillar Name", "name", "entry"),
+            ("Core Principle", "principle", "text"),
+            ("Why It Matters", "importance", "text"),
+            ("Implementation Guidelines", "implementation", "text"),
+            ("Examples in Game", "examples", "text")
+        ]
+        
+        # Figure out a title for this entry
+        if entry_data and entry_data.get('name'):
+            title = entry_data['name']
+        else:
+            title = f"Pillar #{len(self.collapsible_entries['design_pillars']) + 1}"
+        
+        # Create the collapsible entry
+        entry = CollapsibleEntry(
+            parent=self.design_pillars_frame,
+            title=title,
+            entry_data=entry_data,
+            delete_callback=lambda e: self.delete_collapsible_entry('design_pillars', e),
+            fields=fields
+        )
+        
+        # Keep track of it
+        self.collapsible_entries['design_pillars'].append(entry)
+        
+        # Update the scroll area
+        self.design_pillars_frame.update_idletasks()
+        self.design_pillars_canvas.configure(scrollregion=self.design_pillars_canvas.bbox("all"))
+    
     def delete_collapsible_entry(self, section, entry):
         """Remove an entry from the specified section"""
         if entry in self.collapsible_entries[section]:
@@ -712,6 +797,7 @@ class SolarGDDBuilder:
         
         # Update the appropriate scroll area
         canvas_map = {
+            'design_pillars': self.design_pillars_canvas,
             'mechanics': self.mechanics_canvas,
             'levels': self.levels_canvas,
             'characters': self.characters_canvas,
@@ -722,6 +808,7 @@ class SolarGDDBuilder:
         }
         
         frame_map = {
+            'design_pillars': self.design_pillars_frame,
             'mechanics': self.mechanics_frame,
             'levels': self.levels_frame,
             'characters': self.characters_frame,
@@ -1347,9 +1434,6 @@ class SolarGDDBuilder:
                 f.write("- 07_Art_Style/: Visual design documents\n")
                 f.write("- 08_Technical/: Technical requirements and specs\n\n")
                 f.write("Each folder contains individual .txt files for each entry.\n")
-                
-                # Add the footer credits
-                f.write(self.get_footer_credits())
             
             # Create introduction folder and file
             intro_folder = os.path.join(project_folder, "01_Introduction")
@@ -1371,9 +1455,6 @@ class SolarGDDBuilder:
                 ]:
                     if intro.get(field_key):
                         f.write(f"{field_name}:\n{intro[field_key]}\n\n")
-                
-                # Add footer credits to this file too
-                f.write(self.get_footer_credits())
             
             # Create folders for dynamic content sections
             section_info = {
@@ -1411,9 +1492,6 @@ class SolarGDDBuilder:
                                     # Make the field name look nice
                                     formatted_key = key.replace('_', ' ').title()
                                     f.write(f"{formatted_key}:\n{value}\n\n")
-                            
-                            # Add footer to each file
-                            f.write(self.get_footer_credits())
             
             messagebox.showinfo("Export Complete!", 
                               f"GDD file structure created successfully!\n\n"
@@ -1455,13 +1533,14 @@ class SolarGDDBuilder:
                     f.write("TABLE OF CONTENTS\n")
                     f.write("="*20 + "\n\n")
                     f.write("1. Introduction\n")
-                    f.write("2. Game Mechanics\n")
-                    f.write("3. Level Design\n")
-                    f.write("4. Character Design\n")
-                    f.write("5. Item Design\n")
-                    f.write("6. Audio Design\n")
-                    f.write("7. Art Style\n")
-                    f.write("8. Technical Specifications\n\n")
+                    f.write("2. Design Pillars\n")
+                    f.write("3. Game Mechanics\n")
+                    f.write("4. Level Design\n")
+                    f.write("5. Character Design\n")
+                    f.write("6. Item Design\n")
+                    f.write("7. Audio Design\n")
+                    f.write("8. Art Style\n")
+                    f.write("9. Technical Specifications\n\n")
                     
                     # Introduction section
                     f.write("1. INTRODUCTION\n")
@@ -1476,20 +1555,22 @@ class SolarGDDBuilder:
                         ("Target Platform(s)", "platform"),
                         ("Target Audience", "target_audience"),
                         ("Unique Selling Points", "unique_selling_points"),
-                        ("Inspiration/References", "inspiration")
+                        ("Inspiration/References", "inspiration"),
+                        ("Development Timeline", "development_timeline")
                     ]:
                         if intro.get(field_key):
                             f.write(f"{field_name}:\n{intro[field_key]}\n\n")
                     
                     # Dynamic sections
                     section_numbers = {
-                        'mechanics': '2. GAME MECHANICS',
-                        'levels': '3. LEVEL DESIGN',
-                        'characters': '4. CHARACTER DESIGN',
-                        'items': '5. ITEM DESIGN',
-                        'audio': '6. AUDIO DESIGN',
-                        'art_style': '7. ART STYLE',
-                        'technical': '8. TECHNICAL SPECIFICATIONS'
+                        'design_pillars': '2. DESIGN PILLARS',
+                        'mechanics': '3. GAME MECHANICS',
+                        'levels': '4. LEVEL DESIGN',
+                        'characters': '5. CHARACTER DESIGN',
+                        'items': '6. ITEM DESIGN',
+                        'audio': '7. AUDIO DESIGN',
+                        'art_style': '8. ART STYLE',
+                        'technical': '9. TECHNICAL SPECIFICATIONS'
                     }
                     
                     for section_key, section_title in section_numbers.items():
@@ -1513,86 +1594,6 @@ class SolarGDDBuilder:
                 
             except Exception as e:
                 messagebox.showerror("Export Error", f"Failed to export to text:\n\n{str(e)}")
-    
-    def export_to_word(self):
-        """Export to Word document with footer credits"""
-        # Similar implementation with docx, but adding footer credits
-        if not DOCX_AVAILABLE:
-            messagebox.showerror("Word Export Unavailable", 
-                               "python-docx module not found.\n\n"
-                               "Install with: pip install python-docx")
-            return
-        
-        # Collect current data
-        self.collect_all_data()
-        
-        file_path = filedialog.asksaveasfilename(
-            title="Export to Word Document",
-            defaultextension=".docx",
-            filetypes=[("Word documents", "*.docx"), ("All files", "*.*")]
-        )
-        
-        if file_path:
-            try:
-                doc = Document()
-                
-                # Title page
-                title = doc.add_heading("Game Design Document", 0)
-                title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                
-                game_title = self.project_data['introduction'].get('game_title', 'Untitled Game')
-                subtitle = doc.add_heading(game_title, 1)
-                subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                
-                # Metadata
-                doc.add_paragraph(f"Studio: {self.project_data['metadata']['studio']}")
-                doc.add_paragraph(f"Author: {self.project_data['metadata']['author']}")
-                doc.add_paragraph(f"Version: {self.project_data['metadata']['version']}")
-                doc.add_paragraph(f"Created: {self.project_data['metadata']['created_date'][:10]}")
-                doc.add_paragraph(f"Last Modified: {self.project_data['metadata']['last_modified'][:10]}")
-                
-                # Add credits footer as a paragraph
-                footer_text = self.get_footer_credits()
-                doc.add_paragraph(footer_text)
-                
-                doc.add_page_break()
-                
-                # Rest of the Word export implementation would go here...
-                # For now, just save what we have
-                doc.save(file_path)
-                messagebox.showinfo("Export Complete!", f"GDD exported successfully!\n\n{file_path}")
-                
-            except Exception as e:
-                messagebox.showerror("Export Error", f"Failed to export to Word:\n\n{str(e)}")
-    
-    def update_ui_with_data(self):
-        """Add a new audio entry using collapsible design"""
-        fields = [
-            ("Audio Name", "name", "entry"),
-            ("Type", "audio_type", "entry"),
-            ("Context/Trigger", "context", "entry"),
-            ("Duration", "duration", "entry"),
-            ("Volume Level", "volume", "entry"),
-            ("Description", "description", "text"),
-            ("Mood/Feeling", "mood", "text"),
-            ("Implementation Notes", "implementation", "text")
-        ]
-        
-        title = entry_data.get('name', f"Audio #{len(self.collapsible_entries['audio']) + 1}") if entry_data else f"Audio #{len(self.collapsible_entries['audio']) + 1}"
-        
-        entry = CollapsibleEntry(
-            parent=self.audio_frame,
-            title=title,
-            entry_data=entry_data,
-            delete_callback=lambda e: self.delete_collapsible_entry('audio', e),
-            fields=fields
-        )
-        
-        self.collapsible_entries['audio'].append(entry)
-        
-        # Update scroll region
-        self.audio_frame.update_idletasks()
-        self.audio_canvas.configure(scrollregion=self.audio_canvas.bbox("all"))
     
     # File operations
     def new_project(self):
@@ -1632,18 +1633,20 @@ class SolarGDDBuilder:
                 f.write(f"Game Design Document: {self.project_data['introduction'].get('game_title', 'Untitled Game')}\n")
                 f.write("=" * 60 + "\n\n")
                 f.write(f"Studio: {self.project_data['metadata']['studio']}\n")
+                f.write(f"Author: {self.project_data['metadata']['author']}\n")
                 f.write(f"Version: {self.project_data['metadata']['version']}\n")
                 f.write(f"Created: {self.project_data['metadata']['created_date'][:10]}\n")
                 f.write(f"Last Modified: {self.project_data['metadata']['last_modified'][:10]}\n\n")
                 f.write("FOLDER STRUCTURE:\n")
                 f.write("- 01_Introduction/: Game overview and basic information\n")
-                f.write("- 02_Mechanics/: Game mechanics and systems\n")
-                f.write("- 03_Levels/: Level design documents\n")
-                f.write("- 04_Characters/: Character designs and specifications\n")
-                f.write("- 05_Items/: Item designs and balance information\n")
-                f.write("- 06_Audio/: Audio design specifications\n")
-                f.write("- 07_Art_Style/: Visual design documents\n")
-                f.write("- 08_Technical/: Technical requirements and specifications\n\n")
+                f.write("- 02_Design_Pillars/: Core design principles and guidelines\n")
+                f.write("- 03_Mechanics/: Game mechanics and systems\n")
+                f.write("- 04_Levels/: Level design documents\n")
+                f.write("- 05_Characters/: Character designs and specifications\n")
+                f.write("- 06_Items/: Item designs and balance information\n")
+                f.write("- 07_Audio/: Audio design specifications\n")
+                f.write("- 08_Art_Style/: Visual design documents\n")
+                f.write("- 09_Technical/: Technical requirements and specifications\n\n")
                 f.write("Each folder contains individual .txt files for each entry.\n")
             
             # Create Introduction folder and file
@@ -1655,28 +1658,33 @@ class SolarGDDBuilder:
                 intro = self.project_data['introduction']
                 f.write(f"GAME TITLE: {intro.get('game_title', '')}\n")
                 f.write("=" * 40 + "\n\n")
-                if intro.get('genre'):
-                    f.write(f"Genre: {intro['genre']}\n\n")
-                if intro.get('platform'):
-                    f.write(f"Target Platform(s): {intro['platform']}\n\n")
-                if intro.get('target_audience'):
-                    f.write(f"Target Audience: {intro['target_audience']}\n\n")
-                if intro.get('game_overview'):
-                    f.write(f"Game Overview:\n{intro['game_overview']}\n\n")
-                if intro.get('unique_selling_points'):
-                    f.write(f"Unique Selling Points:\n{intro['unique_selling_points']}\n\n")
-                if intro.get('inspiration'):
-                    f.write(f"Inspiration/References:\n{intro['inspiration']}\n\n")
+                
+                # Include all introduction fields
+                intro_fields = [
+                    ("Project Name", "project_name"),
+                    ("Genre", "genre"),
+                    ("Target Platform(s)", "platform"),
+                    ("Target Audience", "target_audience"),
+                    ("Game Overview", "game_overview"),
+                    ("Unique Selling Points", "unique_selling_points"),
+                    ("Inspiration/References", "inspiration"),
+                    ("Development Timeline", "development_timeline")
+                ]
+                
+                for field_name, field_key in intro_fields:
+                    if intro.get(field_key):
+                        f.write(f"{field_name}:\n{intro[field_key]}\n\n")
             
             # Create dynamic section folders and files
             section_info = {
-                'mechanics': ('02_Mechanics', 'Mechanics'),
-                'levels': ('03_Levels', 'Levels'),
-                'characters': ('04_Characters', 'Characters'),
-                'items': ('05_Items', 'Items'),
-                'audio': ('06_Audio', 'Audio'),
-                'art_style': ('07_Art_Style', 'Art_Style'),
-                'technical': ('08_Technical', 'Technical')
+                'design_pillars': ('02_Design_Pillars', 'Design_Pillars'),
+                'mechanics': ('03_Mechanics', 'Mechanics'),
+                'levels': ('04_Levels', 'Levels'),
+                'characters': ('05_Characters', 'Characters'),
+                'items': ('06_Items', 'Items'),
+                'audio': ('07_Audio', 'Audio'),
+                'art_style': ('08_Art_Style', 'Art_Style'),
+                'technical': ('09_Technical', 'Technical')
             }
             
             for section_key, (folder_name, display_name) in section_info.items():
@@ -1728,6 +1736,7 @@ class SolarGDDBuilder:
         
         # Rebuild all dynamic sections using collapsible entries
         section_add_methods = {
+            'design_pillars': self.add_design_pillar_entry,
             'mechanics': self.add_mechanic_entry,
             'levels': self.add_level_entry,
             'characters': self.add_character_entry,
@@ -1749,6 +1758,7 @@ class SolarGDDBuilder:
         
         # Clear all frames
         frame_map = {
+            'design_pillars': self.design_pillars_frame,
             'mechanics': self.mechanics_frame,
             'levels': self.levels_frame,
             'characters': self.characters_frame,
@@ -1814,6 +1824,7 @@ class SolarGDDBuilder:
                 # Metadata
                 doc.add_paragraph(f"Version: {self.project_data['metadata']['version']}")
                 doc.add_paragraph(f"Studio: {self.project_data['metadata']['studio']}")
+                doc.add_paragraph(f"Author: {self.project_data['metadata']['author']}")
                 doc.add_paragraph(f"Created: {self.project_data['metadata']['created_date'][:10]}")
                 doc.add_paragraph(f"Last Modified: {self.project_data['metadata']['last_modified'][:10]}")
                 
@@ -1823,13 +1834,14 @@ class SolarGDDBuilder:
                 doc.add_heading("Table of Contents", 1)
                 toc_items = [
                     "1. Introduction",
-                    "2. Game Mechanics",
-                    "3. Level Design",
-                    "4. Character Design",
-                    "5. Item Design",
-                    "6. Audio Design",
-                    "7. Art Style & Visuals",
-                    "8. Technical Specifications"
+                    "2. Design Pillars",
+                    "3. Game Mechanics",
+                    "4. Level Design",
+                    "5. Character Design",
+                    "6. Item Design",
+                    "7. Audio Design",
+                    "8. Art Style & Visuals",
+                    "9. Technical Specifications"
                 ]
                 for item in toc_items:
                     doc.add_paragraph(item, style='List Number')
@@ -1839,146 +1851,220 @@ class SolarGDDBuilder:
                 # Introduction
                 doc.add_heading("1. Introduction", 1)
                 intro = self.project_data['introduction']
-                if intro.get('project_name'):
-                    doc.add_heading("Project Name", 2)
-                    doc.add_paragraph(intro['project_name'])
-
-                if intro.get('game_title'):
-                    doc.add_heading("Game Title", 2)
-                    doc.add_paragraph(intro['game_title'])
-
-                if intro.get('game_overview'):
-                    doc.add_heading("Game Overview", 2)
-                    doc.add_paragraph(intro['game_overview'])
                 
-                if intro.get('genre'):
-                    doc.add_heading("Genre", 2)
-                    doc.add_paragraph(intro['genre'])
+                # Define all introduction fields with their display names
+                intro_fields = [
+                    ("Project Name", "project_name"),
+                    ("Game Title", "game_title"),
+                    ("Game Overview", "game_overview"),
+                    ("Genre", "genre"),
+                    ("Target Platform(s)", "platform"),
+                    ("Target Audience", "target_audience"),
+                    ("Unique Selling Points", "unique_selling_points"),
+                    ("Inspiration/References", "inspiration"),
+                    ("Development Timeline", "development_timeline")
+                ]
                 
-                if intro.get('platform'):
-                    doc.add_heading("Target Platform(s)", 2)
-                    doc.add_paragraph(intro['platform'])
+                for field_name, field_key in intro_fields:
+                    if intro.get(field_key):
+                        doc.add_heading(field_name, 2)
+                        doc.add_paragraph(intro[field_key])
                 
-                if intro.get('target_audience'):
-                    doc.add_heading("Target Audience", 2)
-                    doc.add_paragraph(intro['target_audience'])
-                
-                if intro.get('unique_selling_points'):
-                    doc.add_heading("Unique Selling Points", 2)
-                    doc.add_paragraph(intro['unique_selling_points'])
-                
-                if intro.get('inspiration'):
-                    doc.add_heading("Inspiration/References", 2)
-                    doc.add_paragraph(intro['inspiration'])
+                # Design Pillars
+                if self.project_data.get('design_pillars'):
+                    doc.add_heading("2. Design Pillars", 1)
+                    
+                    # Define all design pillar fields with their display names
+                    pillar_fields = [
+                        ("Core Principle", "principle"),
+                        ("Why It Matters", "importance"),
+                        ("Implementation Guidelines", "implementation"),
+                        ("Examples in Game", "examples")
+                    ]
+                    
+                    for i, pillar in enumerate(self.project_data['design_pillars'], 1):
+                        if pillar.get('name'):
+                            doc.add_heading(f"2.{i} {pillar['name']}", 2)
+                            
+                            for field_name, field_key in pillar_fields:
+                                if pillar.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {pillar[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Mechanics
                 if self.project_data.get('mechanics'):
-                    doc.add_heading("2. Game Mechanics", 1)
+                    doc.add_heading("3. Game Mechanics", 1)
+                    
+                    # Define all mechanic fields with their display names
+                    mechanic_fields = [
+                        ("Description", "description"),
+                        ("How It Works", "implementation"),
+                        ("Impact on Gameplay", "impact"),
+                        ("Balance Notes", "balance")
+                    ]
+                    
                     for i, mechanic in enumerate(self.project_data['mechanics'], 1):
                         if mechanic.get('name'):
-                            doc.add_heading(f"2.{i} {mechanic['name']}", 2)
-                            if mechanic.get('description'):
-                                doc.add_paragraph(f"Description: {mechanic['description']}")
-                            if mechanic.get('implementation'):
-                                doc.add_paragraph(f"Implementation: {mechanic['implementation']}")
-                            if mechanic.get('impact'):
-                                doc.add_paragraph(f"Player Impact: {mechanic['impact']}")
-                            if mechanic.get('balance'):
-                                doc.add_paragraph(f"Balance Considerations: {mechanic['balance']}")
+                            doc.add_heading(f"3.{i} {mechanic['name']}", 2)
+                            
+                            for field_name, field_key in mechanic_fields:
+                                if mechanic.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {mechanic[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Levels
                 if self.project_data.get('levels'):
-                    doc.add_heading("3. Level Design", 1)
+                    doc.add_heading("4. Level Design", 1)
+                    
+                    # Define all level fields with their display names
+                    level_fields = [
+                        ("Level Type", "level_type"),
+                        ("Difficulty", "difficulty"),
+                        ("Estimated Play Time", "play_time"),
+                        ("Level Objectives", "objectives"),
+                        ("Environment Description", "environment"),
+                        ("Enemies and Challenges", "enemies"),
+                        ("Rewards and Collectibles", "rewards"),
+                        ("Design Notes", "notes")
+                    ]
+                    
                     for i, level in enumerate(self.project_data['levels'], 1):
                         if level.get('name'):
-                            doc.add_heading(f"3.{i} {level['name']}", 2)
-                            if level.get('level_type'):
-                                doc.add_paragraph(f"Type: {level['level_type']}")
-                            if level.get('difficulty'):
-                                doc.add_paragraph(f"Difficulty: {level['difficulty']}")
-                            if level.get('play_time'):
-                                doc.add_paragraph(f"Estimated Play Time: {level['play_time']}")
-                            if level.get('objectives'):
-                                doc.add_paragraph(f"Objectives: {level['objectives']}")
-                            if level.get('environment'):
-                                doc.add_paragraph(f"Environment: {level['environment']}")
-                            if level.get('enemies'):
-                                doc.add_paragraph(f"Enemies/Challenges: {level['enemies']}")
-                            if level.get('rewards'):
-                                doc.add_paragraph(f"Rewards: {level['rewards']}")
+                            doc.add_heading(f"4.{i} {level['name']}", 2)
+                            
+                            for field_name, field_key in level_fields:
+                                if level.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {level[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Characters
                 if self.project_data.get('characters'):
-                    doc.add_heading("4. Character Design", 1)
+                    doc.add_heading("5. Character Design", 1)
+                    
+                    # Define all character fields with their display names
+                    character_fields = [
+                        ("Role/Class", "role"),
+                        ("Health Points", "health"),
+                        ("Movement Speed", "speed"),
+                        ("Attack Damage", "damage"),
+                        ("Attack Speed", "attack_speed"),
+                        ("Special Abilities", "abilities"),
+                        ("Background Story", "background"),
+                        ("Visual Description", "visual"),
+                        ("AI Behavior", "behavior"),
+                        ("Strengths", "strengths"),
+                        ("Weaknesses", "weaknesses")
+                    ]
+                    
                     for i, character in enumerate(self.project_data['characters'], 1):
                         if character.get('name'):
-                            doc.add_heading(f"4.{i} {character['name']}", 2)
-                            if character.get('role'):
-                                doc.add_paragraph(f"Role/Class: {character['role']}")
-                            if character.get('health'):
-                                doc.add_paragraph(f"Health: {character['health']}")
-                            if character.get('damage'):
-                                doc.add_paragraph(f"Attack Damage: {character['damage']}")
-                            if character.get('abilities'):
-                                doc.add_paragraph(f"Special Abilities: {character['abilities']}")
-                            if character.get('background'):
-                                doc.add_paragraph(f"Background: {character['background']}")
+                            doc.add_heading(f"5.{i} {character['name']}", 2)
+                            
+                            for field_name, field_key in character_fields:
+                                if character.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {character[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Items
                 if self.project_data.get('items'):
-                    doc.add_heading("5. Item Design", 1)
+                    doc.add_heading("6. Item Design", 1)
+                    
+                    # Define all item fields with their display names
+                    item_fields = [
+                        ("Item Type", "item_type"),
+                        ("Rarity", "rarity"),
+                        ("Damage/Effect Value", "damage"),
+                        ("Use Time", "use_time"),
+                        ("Cooldown", "cooldown"),
+                        ("Category", "category"),
+                        ("Description", "description"),
+                        ("Function/Purpose", "purpose"),
+                        ("How it Works", "mechanism"),
+                        ("Visual Description", "visual"),
+                        ("Acquisition Method", "acquisition"),
+                        ("Balance Notes", "balance")
+                    ]
+                    
                     for i, item in enumerate(self.project_data['items'], 1):
                         if item.get('name'):
-                            doc.add_heading(f"5.{i} {item['name']}", 2)
-                            if item.get('item_type'):
-                                doc.add_paragraph(f"Type: {item['item_type']}")
-                            if item.get('rarity'):
-                                doc.add_paragraph(f"Rarity: {item['rarity']}")
-                            if item.get('damage'):
-                                doc.add_paragraph(f"Damage/Effect: {item['damage']}")
-                            if item.get('description'):
-                                doc.add_paragraph(f"Description: {item['description']}")
-                            if item.get('purpose'):
-                                doc.add_paragraph(f"Purpose: {item['purpose']}")
+                            doc.add_heading(f"6.{i} {item['name']}", 2)
+                            
+                            for field_name, field_key in item_fields:
+                                if item.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {item[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Audio
                 if self.project_data.get('audio'):
-                    doc.add_heading("6. Audio Design", 1)
+                    doc.add_heading("7. Audio Design", 1)
+                    
+                    # Define all audio fields with their display names
+                    audio_fields = [
+                        ("Type", "audio_type"),
+                        ("Context/Trigger", "context"),
+                        ("Duration", "duration"),
+                        ("Volume Level", "volume"),
+                        ("Description", "description"),
+                        ("Mood/Feeling", "mood"),
+                        ("Implementation Notes", "implementation")
+                    ]
+                    
                     for i, audio in enumerate(self.project_data['audio'], 1):
                         if audio.get('name'):
-                            doc.add_heading(f"6.{i} {audio['name']}", 2)
-                            if audio.get('audio_type'):
-                                doc.add_paragraph(f"Type: {audio['audio_type']}")
-                            if audio.get('context'):
-                                doc.add_paragraph(f"Context: {audio['context']}")
-                            if audio.get('description'):
-                                doc.add_paragraph(f"Description: {audio['description']}")
+                            doc.add_heading(f"7.{i} {audio['name']}", 2)
+                            
+                            for field_name, field_key in audio_fields:
+                                if audio.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {audio[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Art Style
                 if self.project_data.get('art_style'):
-                    doc.add_heading("7. Art Style & Visuals", 1)
+                    doc.add_heading("8. Art Style & Visuals", 1)
+                    
+                    # Define all art style fields with their display names
+                    art_fields = [
+                        ("Art Style", "style"),
+                        ("Color Palette", "colors"),
+                        ("Resolution/Size", "resolution"),
+                        ("Description", "description"),
+                        ("Mood/Atmosphere", "mood"),
+                        ("Technical Requirements", "technical"),
+                        ("Reference Images/Inspiration", "references")
+                    ]
+                    
                     for i, art in enumerate(self.project_data['art_style'], 1):
                         if art.get('name'):
-                            doc.add_heading(f"7.{i} {art['name']}", 2)
-                            if art.get('style'):
-                                doc.add_paragraph(f"Style: {art['style']}")
-                            if art.get('colors'):
-                                doc.add_paragraph(f"Color Palette: {art['colors']}")
-                            if art.get('description'):
-                                doc.add_paragraph(f"Description: {art['description']}")
+                            doc.add_heading(f"8.{i} {art['name']}", 2)
+                            
+                            for field_name, field_key in art_fields:
+                                if art.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {art[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 # Technical
                 if self.project_data.get('technical'):
-                    doc.add_heading("8. Technical Specifications", 1)
+                    doc.add_heading("9. Technical Specifications", 1)
+                    
+                    # Define all technical fields with their display names
+                    technical_fields = [
+                        ("Technology/Engine", "technology"),
+                        ("Performance Target", "performance"),
+                        ("Platform Requirements", "requirements"),
+                        ("Description", "description"),
+                        ("Implementation Details", "implementation"),
+                        ("Challenges/Risks", "challenges"),
+                        ("Testing Requirements", "testing")
+                    ]
+                    
                     for i, tech in enumerate(self.project_data['technical'], 1):
                         if tech.get('name'):
-                            doc.add_heading(f"8.{i} {tech['name']}", 2)
-                            if tech.get('technology'):
-                                doc.add_paragraph(f"Technology: {tech['technology']}")
-                            if tech.get('requirements'):
-                                doc.add_paragraph(f"Requirements: {tech['requirements']}")
-                            if tech.get('description'):
-                                doc.add_paragraph(f"Description: {tech['description']}")
+                            doc.add_heading(f"9.{i} {tech['name']}", 2)
+                            
+                            for field_name, field_key in technical_fields:
+                                if tech.get(field_key):
+                                    doc.add_paragraph(f"{field_name}: {tech[field_key]}")
+                            doc.add_paragraph("")  # Add spacing between entries
                 
                 doc.save(file_path)
                 messagebox.showinfo("Export Successful", f"GDD exported to {file_path}")
@@ -1997,7 +2083,7 @@ Built with love for the indie game development community!
 
 Originally created by: Mikey LaBrecque
 Studio: Dead Orbit Studios
-Version: Open Source Edition
+Version: v1.1.0 - Open Source Edition
 
 Features:
 • Classic early 2000s interface design

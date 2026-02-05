@@ -1,10 +1,11 @@
 @echo off
+setlocal enabledelayedexpansion
 title Solar - Professional Build System
 
 echo.
 echo ================================================================
 echo   Solar - Open Source GDD Builder
-echo   Professional Build System v1.0
+echo   Professional Build System v1.1.0
 echo   Building self-contained executable...
 echo ================================================================
 echo.
@@ -49,7 +50,7 @@ pip install pyinstaller python-docx
 echo.
 echo Building Solar.exe...
 echo ====================
-echo This process may take 5-10 minutes depending on your system.
+echo This process may take 1-3 minutes depending on your system.
 echo.
 
 :: Clean previous builds
@@ -57,37 +58,22 @@ if exist "build" rmdir /s /q "build"
 if exist "dist" rmdir /s /q "dist"
 if exist "Solar.spec" del "Solar.spec"
 
-:: Build the executable with all options
-pyinstaller ^
-    --onefile ^
-    --windowed ^
-    --name "Solar" ^
-    %ICON_PARAM% ^
-    %VERSION_PARAM% ^
-    --add-data "requirements.txt;." ^
-    --add-data "sample_gdd_project.json;." ^
-    --hidden-import "docx" ^
-    --hidden-import "docx.shared" ^
-    --hidden-import "docx.enum.text" ^
-    --hidden-import "docx.oxml" ^
-    --hidden-import "docx.oxml.ns" ^
-    --hidden-import "docx.oxml.parser" ^
-    --hidden-import "docx.parts" ^
-    --hidden-import "docx.text" ^
-    --hidden-import "docx.document" ^
-    --clean ^
-    --noconfirm ^
-    gdd_builder.py
+:: Build the executable and immediately check result
+pyinstaller --onefile --windowed --name "Solar" %ICON_PARAM% %VERSION_PARAM% --add-data "requirements.txt;." --add-data "sample_gdd_project.json;." --hidden-import "docx" --hidden-import "docx.shared" --hidden-import "docx.enum.text" --hidden-import "docx.oxml" --hidden-import "docx.oxml.ns" --hidden-import "docx.oxml.parser" --hidden-import "docx.parts" --hidden-import "docx.text" --hidden-import "docx.document" --clean --noconfirm gdd_builder.py
 
-if %errorlevel% equ 0 (
+if !errorlevel! equ 0 (
     echo.
     echo ================================================================
     echo   BUILD SUCCESSFUL!
     echo ================================================================
     echo.
     echo Solar.exe created successfully in the 'dist' folder
-    echo File size: 
-    for %%A in (dist\Solar.exe) do echo %%~zA bytes
+    
+    if exist "dist\Solar.exe" (
+        echo File size: 
+        for %%A in (dist\Solar.exe) do echo %%~zA bytes
+    )
+    
     echo.
     echo The executable includes:
     echo  - Complete Python runtime
@@ -105,7 +91,7 @@ if %errorlevel% equ 0 (
     if exist "LICENSE" copy "LICENSE" "dist\" >nul
     
     :: Create a release info file
-    echo Solar GDD Builder v1.0 > "dist\RELEASE_INFO.txt"
+    echo Solar GDD Builder v1.1.0 > "dist\RELEASE_INFO.txt"
     echo Built on %DATE% at %TIME% >> "dist\RELEASE_INFO.txt"
     echo. >> "dist\RELEASE_INFO.txt"
     echo This is a self-contained executable that includes: >> "dist\RELEASE_INFO.txt"
@@ -122,6 +108,7 @@ if %errorlevel% equ 0 (
     echo Opening dist folder...
     explorer "dist"
     
+    goto :success
 ) else (
     echo.
     echo ================================================================
@@ -138,9 +125,17 @@ if %errorlevel% equ 0 (
     echo.
     echo If problems persist, check the error messages above.
     echo.
+    goto :failure
 )
 
+:success
 echo.
-echo Build process completed.
+echo Build process completed successfully!
 pause
+exit /b 0
 
+:failure
+echo.
+echo Build process failed.
+pause
+exit /b 1
