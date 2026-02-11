@@ -2,7 +2,7 @@
 
 Solar is a desktop application for creating and maintaining Game Design Documents without relying on online services, proprietary tools, or rigid templates. It's designed for developers who want structured documentation that scales with a project, while still remaining easy to edit and version control.
 
-Solar began as an internal tool built at Dead Orbit Studios to manage large, evolving GDDs. It has since been open-sourced for anyone who wants a practical, no-nonsense documentation workflow.
+Solar began as an internal tool built at Dead Orbit Studios to manage large, evolving GDDs. It has since been open-sourced for anyone who wants a practical, no-nonsense documentation workflow. While Solar will get you the majority of the way there, if you want a really refined and presentation ready GDD, you'll most certainly want to go in and reformat the exported document to suit your unique needs.
 
 ## Overview
 
@@ -12,7 +12,7 @@ Solar focuses on three core ideas:
 - Make large design documents manageable  
 - Support real production workflows, including version control  
 
-The application uses a simple desktop interface with collapsible entries to prevent large projects from becoming unreadable walls of text.
+The application uses a simple desktop interface with collapsible entries to prevent large projects from becoming unreadable walls of text. Version 2.0.0 introduces three specialized professional documentation tabs (Combat Mechanics, Player Progression, and Map Design) that expand Solar's capabilities to over 170 comprehensive documentation fields, suitable for documenting complex game systems at professional development standards.
 
 ## Features
 
@@ -54,6 +54,40 @@ Solar includes a dedicated Design Pillars section to help teams maintain focus o
 
 This ensures all team members understand and can refer back to the foundational design decisions throughout development.
 
+### Documentation Tabs
+
+Version 2.0.0 introduces three specialized tabs designed for professional game development workflows:
+
+**Combat Mechanics Documentation**
+Solar now includes comprehensive documentation for weapons, abilities, and combat systems with 27 professional fields:
+
+- **Core Statistics**: Damage values, rate of fire, reload times, ammunition capacity, and range metrics
+- **Balance Analysis**: Strengths, weaknesses, counter-play options, competitive usage statistics, and balance history
+- **Special Mechanics**: Abilities, status effects, cooldowns, resource costs, and area of effect documentation
+- **Technical Implementation**: Known issues tracking, implementation notes, and performance considerations
+- **Competitive Data**: Pick rates, win rates, and professional usage analysis
+
+**Player Progression Systems**
+Complete documentation for retention mechanics and monetization systems with 27 specialized fields:
+
+- **Progression Mechanics**: XP scaling formulas, level caps, time investment estimates, and unlock requirements
+- **Reward Systems**: Milestone rewards, daily bonuses, seasonal events, and special unlock mechanisms
+- **Currency Economics**: Earning rates, spending options, monetization impact analysis, and economic balance
+- **Retention Strategies**: Engagement hooks, social features, FOMO elements, and player feedback integration
+- **Analytics Integration**: Player behavior tracking, retention metrics, and progression analytics
+
+**Map Design Analysis**
+Professional level design documentation with 27 fields for strategic and competitive analysis:
+
+- **Layout Specifications**: Dimensions, player counts, spawn systems, and objective placement
+- **Strategic Elements**: Sightlines, cover positions, flanking routes, and high ground advantages
+- **Communication Systems**: Official callouts, community terminology, and strategic zone definitions
+- **Environmental Design**: Interactive hazards, destructible objects, lighting considerations, and atmospheric effects
+- **Competitive Analysis**: Traffic flow patterns, balance considerations, known exploits, and tournament viability
+
+These additions bring Solar's total documentation capacity to over 170 professional fields, making it suitable for documenting complex game systems found in AAA development environments.
+
+
 ### Export Options
 
 - Microsoft Word (.docx) export with clean section formatting and complete field coverage
@@ -74,6 +108,10 @@ The structured export is designed specifically for Git-based workflows, allowing
 - No accounts, no cloud services, fully offline
 - Clean, professional exports without repetitive footer credits
 - Configurable studio and author information with consistent export formatting
+- **Enhanced Interface**: Natural mouse wheel scrolling throughout the application, eliminating the need to find small scrollbars
+- **Optimized Window Sizing**: Default window size increased to 1400x800 with minimum size constraints to properly display all professional tabs
+- **Extended Session Stability**: Production-grade memory management enabling reliable operation during multi-hour documentation sessions
+- **Comprehensive Error Handling**: Enhanced error recovery and detailed logging ensuring stable operation during complex workflows
 
 <p align="center">
   <img src="assets/configure_studio_author.png" width="300">
@@ -154,22 +192,31 @@ The goal is to stay out of the way and let the documentation speak for itself.
 
 The codebase is intentionally straightforward. Adding new sections or fields follows established patterns and does not require major refactoring.
 
-### Recent Updates (v1.1.0)
+### Recent Updates (v2.0.0)
 
-**New Features:**
+**Major New Features:**
+- **Three New Professional Documentation Tabs**: Combat Mechanics, Player Progression, and Map Design with 81 additional specialized fields
+- **Enhanced User Interface**: Improved window sizing (1400x800 default) with natural mouse wheel scrolling throughout the application
+- **Production-Grade Stability**: Comprehensive memory management and error handling for extended documentation sessions
+- **Professional Sample Project**: Complete "Void Arena" GDD demonstrating all features with industry-quality content
+
+**Documentation Enhancements:**
+- **Expanded Structure**: Complete 12-section documentation framework suitable for AAA development standards
+- **Enhanced Export System**: Improved formatting and professional presentation across all export formats
+- **Field Coverage**: Total documentation capacity increased from 120+ to 170+ professional fields
+- **Cross-Platform Improvements**: Enhanced stability and performance across Windows, macOS, and Linux
+
+**Stability and Performance:**
+- **Memory Leak Prevention**: Automatic resource cleanup during extended sessions
+- **Enhanced Error Handling**: Graceful recovery from edge cases with comprehensive logging
+- **Performance Optimization**: Improved responsiveness for large documentation projects
+- **Professional Reliability**: Production-ready stability for commercial development workflows
+
+**Previous Updates (v1.1.0):**
 - Design Pillars tab for documenting core design principles
 - Complete field export coverage across all categories
 - Enhanced author attribution in all export formats
-
-**Bug Fixes:**
-- Fixed missing fields in Word document exports
-- Resolved inconsistent author information across export formats
-- Cleaned up repetitive footer credits
-
-**Improvements:**
-- Updated section numbering to accommodate Design Pillars
-- Standardized export formatting across all output types
-- Enhanced data preservation during exports
+- Fixed missing fields in Word document exports and improved export consistency
 
 ### Contributing
 
@@ -180,14 +227,6 @@ Contributions are welcome.
 - Documentation improvements are appreciated
 
 If you fork Solar for your own workflow, feel free to adapt it as needed.
-
-### Documentation Contributions
-
-If you’d like to improve documentation:
-- Open a Pull Request with your changes, **or**
-- Paste proposed Markdown directly into an Issue or Discussion
-
-Please do not send files via external links unless requested.
 
 ### Use Cases
 
@@ -204,6 +243,12 @@ Solar is suitable for:
 
 For released binaries, SHA-256 checksums are provided to verify file integrity.
 
+```bash
+Version: 2.0.0
+File: Solar.exe
+Size: 17929503 bytes
+SHA256: 4f55a95205633324861c28cf2254b81155d105a627770a95949d8409d7f3aac5
+```
 ```bash
 Version: 1.1.0
 File: Solar.exe
